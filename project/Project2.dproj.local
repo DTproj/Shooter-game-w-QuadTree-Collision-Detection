@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.106,=D:\delphiproj\project\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.599,=D:\delphiproj\project\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.016,=D:\delphiproj\project\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.605,=D:\delphiproj\project\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.495,=D:\delphiproj\project\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.475,D:\proj\Unit2.pas=C:\Users\Mura\Desktop\project\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.475,D:\proj\Unit2.dfm=C:\Users\Mura\Desktop\project\Unit2.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.618,C:\Users\Mura\Desktop\dorian-projekti\Unit2.dfm=D:\proj\Unit2.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.779,=C:\Users\Dorian\Documents\Embarcadero\Studio\Projects\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.477,C:\Users\Dorian\Documents\Embarcadero\Studio\Projects\Unit2.dfm=C:\Users\Dorian\Desktop\proj\Unit2.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.477,C:\Users\Dorian\Documents\Embarcadero\Studio\Projects\Unit2.pas=C:\Users\Dorian\Desktop\proj\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.831,=D:\delphiproj\project\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.253,D:\delphiproj\project\Unit1.pas=D:\delphiproj\project\PlayerUnit.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.519,D:\delphiproj\project\Unit1.pas=D:\delphiproj\project\GunUnit.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.398,D:\proj\Project2.dproj=C:\Users\Mura\Desktop\project\Project2.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.329,C:\Users\Dorian\Documents\Embarcadero\Studio\Projects\Project2.dproj=C:\Users\Dorian\Desktop\proj\Project2.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.618,C:\Users\Mura\Desktop\dorian-projekti\Unit2.pas=D:\proj\Unit2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.309,D:\delphiproj\project\Unit1.pas=D:\delphiproj\project\BoidUnit.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.946,D:\delphiproj\project\Unit1.pas=D:\delphiproj\project\MetakUnit.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.457,D:\delphiproj\project\Unit1.pas=D:\delphiproj\project\MyTypes.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.448,D:\delphiproj\project\Unit1.pas=D:\delphiproj\project\QuadTreeUnit.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.577,D:\delphiproj\project\Unit1.pas=D:\delphiproj\project\GameUnit.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.133,=D:\delphiproj\project\Unit1.pas</Transaction>
+  </Transactions>
+</BorlandProject>

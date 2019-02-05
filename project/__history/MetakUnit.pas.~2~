@@ -1,0 +1,47 @@
+unit MetakUnit;
+
+interface
+
+uses
+  BoidUnit, MyTypes, Winapi.Windows;
+
+type
+
+TMetak = class (TBoid)
+
+  brzina : integer;
+
+  constructor create;
+  procedure move(aVector : TVector3f; aRect : TRect); virtual;
+
+end;
+
+TMetak2 = class (TMetak)
+
+  constructor create;
+
+end;
+
+TMetak3 = class (TMetak)
+
+  exRadijus, exTime : integer;
+  constructor create;
+  procedure move(aVector : TVector3f; aRect : TRect); override;
+  function intersect (aBoid : TBoid) : boolean; override;
+
+end;
+
+TMetak4 = class (TMetak)
+
+  exRadijus, detR : integer;
+  constructor create;
+  procedure move(aVector : TVector3f; aRect : TRect); override;
+  function intersect (aBoid : TBoid) : boolean; override;
+
+end;
+
+
+
+implementation
+
+end.

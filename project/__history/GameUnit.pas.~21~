@@ -1,0 +1,397 @@
+unit GameUnit;
+
+interface
+
+uses
+ MyTypes, PlayerUnit, Winapi.Windows, QuadTreeUnit, System.Classes, Vcl.Graphics,
+ BoidUnit, MetakUnit, GunUnit, Vcl.Controls;
+
+type
+
+ TGame = class
+ private
+   fBoidList, fMetakList : TList;
+    fQtree : TQuadTree;
+    fPlayer : TPlayer;
+    fMaxEn, fGunIx, fWidth, fHeight : integer;
+    fGameOver : boolean;
+    procedure createBoidList;
+    procedure clearBoidList (list : TList);
+ public
+
+  constructor create;
+  destructor destroy;
+
+  procedure setSize(aW : integer; aH : integer);
+  function render : TBitmap;
+  procedure gameTick;
+  procedure gameReset;
+  procedure keyDown (Sender: TObject; var Key: Word; Shift: TShiftState);
+  procedure mouseDown (Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+
+  property player : TPlayer read fPlayer;
+  property metakList : TList read fMetakList;
+
+ end;
+
+implementation
+
+{ TGame }
+
+procedure TGame.clearBoidList(list: TList);
+var
+  i : integer;
+begin
+
+  for i := 0 to List.Count -1 do
+  begin
+
+    TBoid (List.Items[i]).Free;
+
+  end;
+
+end;
+
+constructor TGame.create;
+
+begin
+
+  fBoidList := TList.Create;
+  fMetakList := TList.Create;
+  fQtree := nil;
+  fPlayer := TPlayer.create;
+  fMaxEn := 29;
+  fGunIx := 0;
+  fGameOver := false;
+
+  createBoidList;
+
+end;
+
+procedure TGame.createBoidList;
+var
+  i : integer;
+begin
+
+  for i := 0 to fMaxEn do
+  begin
+
+    fBoidList.Add(TBoid.create);
+
+  end;
+
+end;
+
+destructor TGame.destroy;
+var
+  i : integer;
+begin
+
+  if fQTree <> nil then
+  begin
+    fQtree.Free;
+  end;
+
+  fPlayer.Free;
+
+  clearBoidList(fBoidList);
+  clearBoidList(fMetakList);
+
+end;
+
+procedure TGame.gameReset;
+var
+  i : integer;
+begin
+
+  fplayer.hp := 100;
+
+  clearBoidList(fBoidList);
+  clearBoidList(fMetakList);
+
+  for i := 0 to fplayer.oruzje.Count-1 do
+  begin
+
+    TGun (fplayer.oruzje.Items[i]).ammo := TGun (fplayer.oruzje.Items[i]).maxAmmo;
+
+  end;
+
+  createBoidList;
+end;
+
+procedure TGame.gameTick;
+var
+  v, v2 : TVector3f;
+  i, j, r, k : integer;
+  qRange : TRect;
+  boid, boid2 : TBoid;
+  found : TList;
+  ex : boolean;
+begin
+
+   if fQTree <> nil then
+   begin
+    fQTree.Destroy;
+   end;
+
+   fQtree := TQuadTree.create(bounds(0, 0, fWidth, fHeight));
+
+   for i := 0 to fBoidList.Count-1 do
+  begin
+
+    TBoid (fboidList.Items[i]).move(v, bounds(0, 0, fWidth, fHeight));
+    fqTree.insert(TBoid (fboidList.Items[i]));
+
+    if TBoid (fboidList.Items[i]).hp > 5 then
+    begin
+      TBoid (fboidList.Items[i]).boja := clBlue;
+    end
+    else
+    begin
+      TBoid (fboidList.Items[i]).boja := clPurple;
+    end;
+  end;
+
+  //metakList
+
+  for i := 0 to fmetakList.Count-1 do
+  begin
+    TMetak (fMetakList.Items[i]).move(v, bounds(0, 0, fWidth, fHeight));
+  end;
+
+  //player
+
+  found := TList.Create;
+  boid := fplayer;
+  r := boid.radijus;
+  v2 := boid.pozicija;
+
+  qRange := TRect.Create(round(v2[0]-r), round(v2[1]-r),round(v2[0]+r*4), round(v2[1]+r*4));
+
+  found.Clear;
+
+  fqTree.query(qRange, found);
+
+  for j := 0 to found.Count-1 do
+  begin
+
+    if boid.intersect(TBoid (found.Items[j])) then
+    begin
+
+      if TBoid (found.Items[j]).hp > 0 then
+      begin
+
+        boid.hp := boid.hp - TBoid (found.Items[j]).hp;
+        TBoid (found.Items[j]).hp := 0;
+
+      end;
+    end;
+  end;
+
+  if boid.hp <= 0 then
+  begin
+    fGameOver := true;
+  end
+  else if boid.hp <= 25 then
+  begin
+    boid.boja := clRed;
+  end
+  else if boid.hp <= 50 then
+  begin
+    boid.boja := clYellow;
+  end;
+
+  //metak intersect
+
+  found.Clear;
+
+  for i := 0 to fmetakList.Count-1 do
+  begin
+
+    boid := TMetak (fmetakList.Items[i]);
+
+    ex := false;
+
+    if boid is TMetak3 then
+    begin
+      r := TMetak3 (boid).exRadijus;
+      if TMetak3 (boid).exTime > 0 then
+      begin
+        continue;
+      end
+      else
+      begin
+        ex := true;
+      end;
+    end
+    else
+    begin
+      r := boid.radijus;
+    end;
+
+    v2 := boid.pozicija;
+
+    qRange := TRect.Create(round(v2[0]-r), round(v2[1]-r),round(v2[0]+r*4), round(v2[1]+r*4));
+
+    fqTree.query(qRange, found);
+
+    for j := 0 to found.Count-1 do
+    begin
+
+      boid2 := TBoid (found.Items[j]);
+
+      if boid.intersect(boid2) then
+      begin
+        boid2.hp := boid2.hp - boid.hp;
+        if not ex then
+        begin
+          boid.hp := 0;
+        end;
+      end;
+    end;
+
+    if ex then
+    begin
+      boid.hp := 0;
+    end;
+  end;
+
+  //remove dead boid & metak
+
+  for i := fboidList.Count-1 downto 0 do
+  begin
+
+    if TBoid (fboidList.Items[i]).hp <= 0 then
+    begin
+      TBoid (fboidList.Items[i]).Destroy;
+      fboidList.Delete(i);
+    end;
+  end;
+
+  for i := fmetakList.Count-1 downto 0 do
+  begin
+    if TMetak(fmetakList.Items[i]).hp <= 0 then
+    begin
+      TMetak (fmetakList.Items[i]).Destroy;
+      fmetakList.Delete(i);
+    end;
+  end;
+
+  //cd
+
+  for i := 0 to fplayer.oruzje.Count-1 do
+  begin
+
+     if TGun (fplayer.oruzje.Items[i]).cd > 0 then
+     begin
+       dec(TGun (fplayer.oruzje.Items[i]).cd);
+     end;
+
+  end;
+
+
+  //end
+
+end;
+
+procedure TGame.keyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+var
+  pP : TVector3f;
+  pS : TVector3f;
+begin
+
+  pP := player.pozicija;
+  pS := player.smjer;
+
+  case Key of
+    VK_LEFT:
+    begin
+      pP[0] :=  pP[0] - pS[0];
+      player.move(pP,bounds(0, 0, fWidth, fHeight));
+    end;
+
+    VK_RIGHT:
+    begin
+      pP[0] :=  pP[0] + pS[0];
+      player.move(pP,bounds(0, 0, fWidth, fHeight));
+    end;
+
+    VK_SPACE:
+    begin
+      if player.gun.ammo > 0 then
+      begin
+        if player.gun.cd <= 0 then
+        begin
+          fmetakList.Add(player.gun.fire);
+        end;
+      end;
+    end;
+
+    VK_RETURN:
+    begin
+      player.reload;
+    end;
+
+    VK_UP:
+    begin
+      player.gunNxt;
+    end;
+
+    VK_DOWN:
+    begin
+      player.gunPrev;
+    end;
+  end;
+end;
+
+procedure TGame.mouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+
+  if player.mina.ammo > 0 then
+  begin
+    if player.mina.cd <= 0 then
+    begin
+       metakList.Add(player.mina.fire(x, y));
+    end;
+  end;
+
+end;
+
+function TGame.render: TBitmap;
+var
+  i : integer;
+begin
+
+  result := TBitmap.Create;
+  result.Width := fWidth;
+  result.Height := fHeight;
+
+  // qTree.render(btm.Canvas);
+
+  for i := 0 to fBoidList.Count-1 do
+  begin
+    TBoid (fBoidList.Items[i]).render(result.Canvas);
+  end;
+
+  fPlayer.render(result.Canvas);
+
+  for i := 0 to fMetakList.Count-1 do
+  begin
+    TMetak (fMetakList.Items[i]).render(result.Canvas)
+  end;
+
+end;
+
+procedure TGame.setSize(aW, aH: integer);
+begin
+
+  fWidth := aW;
+  fHeight := aH;
+
+  fplayer.pozicija[0] := fWidth/2;
+  fplayer.pozicija[1] := fHeight;
+
+end;
+
+end.

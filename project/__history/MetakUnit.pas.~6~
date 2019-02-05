@@ -1,0 +1,223 @@
+unit MetakUnit;
+
+interface
+
+uses
+  BoidUnit, MyTypes, Winapi.Windows, Math, Vcl.Graphics;
+
+type
+
+TMetak = class (TBoid)
+
+  brzina : integer;
+
+  constructor create;
+  destructor destroy; override;
+  procedure move(aVector : TVector3f; aRect : TRect); virtual;
+
+end;
+
+TMetak2 = class (TMetak)
+
+  constructor create;
+  destructor destroy; override;
+
+end;
+
+TMetak3 = class (TMetak)
+
+  exRadijus, exTime : integer;
+  constructor create;
+  destructor destroy; override;
+  procedure move(aVector : TVector3f; aRect : TRect); override;
+  function intersect (aBoid : TBoid) : boolean; override;
+
+end;
+
+TMetak4 = class (TMetak)
+
+  exRadijus, detR : integer;
+  constructor create;
+  destructor destroy; override;
+  procedure move(aVector : TVector3f; aRect : TRect); override;
+  function intersect (aBoid : TBoid) : boolean; override;
+
+end;
+
+
+
+implementation
+
+{ TMetak }
+
+constructor TMetak.create;
+begin
+
+  hp := 1;
+  radijus := 2;
+  boja := clBlack;
+  brzina := 5;
+
+end;
+
+destructor TMetak.destroy;
+begin
+
+  inherited;
+end;
+
+procedure TMetak.move(aVector: TVector3f; aRect: TRect);
+begin
+
+   pozicija[1] := pozicija[1] - smjer[1]*brzina;
+
+   if pozicija[1] < 0 then
+   begin
+     hp := 0;
+   end;
+
+end;
+
+{ TMetak2 }
+
+constructor TMetak2.create;
+begin
+
+  inherited create;
+
+  hp := 3;
+  radijus := 4;
+  boja := clBlack;
+  brzina := 5;
+
+end;
+
+destructor TMetak2.destroy;
+begin
+
+  inherited;
+end;
+
+{ TMetak3 }
+
+constructor TMetak3.create;
+begin
+  inherited;
+
+  hp := 10;
+  radijus := 6;
+  boja := clBlack;
+  brzina := RandomRange(25,50);
+  exRadijus := 50;
+  exTime := 250;
+
+end;
+
+destructor TMetak3.destroy;
+begin
+
+  inherited;
+end;
+
+function TMetak3.intersect(aBoid: TBoid): boolean;
+var
+  c, a, b: single;
+begin
+
+  result := false;
+
+  a := abs( pozicija[0] - aBoid.pozicija[0]);
+  b := abs( pozicija[1] - aBoid.pozicija[1]);
+
+  c := sqrt(a*a + b*b);
+
+  if c < (exRadijus + aBoid.radijus) then
+  begin
+
+    if c > 35 then
+    begin
+      hp := 5;
+    end;
+
+    result := true;
+
+  end;
+
+end;
+
+procedure TMetak3.move(aVector: TVector3f; aRect: TRect);
+begin
+
+  brzina := brzina - 1;
+
+  if brzina < 0 then
+  begin
+    brzina := 0;
+  end;
+
+  inherited;
+
+  if pozicija[1] <= 1 then
+  begin
+    hp := 10;
+    smjer[1] := - smjer[1];
+  end;
+
+  dec(exTime);
+
+end;
+
+{ TMetak4 }
+
+constructor TMetak4.create;
+begin
+
+  inherited;
+
+  hp := 10;
+  radijus := 7;
+  boja := clBlack;
+  brzina := 0;
+  exRadijus := 60;
+
+end;
+
+destructor TMetak4.destroy;
+begin
+
+  inherited;
+end;
+
+function TMetak4.intersect(aBoid: TBoid): boolean;
+var
+  c, a, b: single;
+begin
+
+  result := false;
+
+  a := abs( pozicija[0] - aBoid.pozicija[0]);
+  b := abs( pozicija[1] - aBoid.pozicija[1]);
+
+  c := sqrt(a*a + b*b);
+
+  if c < (exRadijus + aBoid.radijus) then
+  begin
+
+    if c > 45 then
+    begin
+      hp := 5;
+    end;
+
+    result := true;
+
+  end;
+
+end;
+
+procedure TMetak4.move(aVector: TVector3f; aRect: TRect);
+begin
+  inherited;
+
+end;
+
+end.

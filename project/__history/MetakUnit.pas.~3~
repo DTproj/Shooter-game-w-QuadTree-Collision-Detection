@@ -1,0 +1,71 @@
+unit MetakUnit;
+
+interface
+
+uses
+  BoidUnit, MyTypes, Winapi.Windows;
+
+type
+
+TMetak = class (TBoid)
+
+  brzina : integer;
+
+  constructor create;
+  procedure move(aVector : TVector3f; aRect : TRect); virtual;
+
+end;
+
+TMetak2 = class (TMetak)
+
+  constructor create;
+
+end;
+
+TMetak3 = class (TMetak)
+
+  exRadijus, exTime : integer;
+  constructor create;
+  procedure move(aVector : TVector3f; aRect : TRect); override;
+  function intersect (aBoid : TBoid) : boolean; override;
+
+end;
+
+TMetak4 = class (TMetak)
+
+  exRadijus, detR : integer;
+  constructor create;
+  procedure move(aVector : TVector3f; aRect : TRect); override;
+  function intersect (aBoid : TBoid) : boolean; override;
+
+end;
+
+
+
+implementation
+
+{ TMetak }
+
+constructor TMetak.create;
+begin
+
+  hp := 1;
+  radijus := 2;
+  boja := clBlack;
+  brzina := 5;
+
+end;
+
+procedure TMetak.move(aVector: TVector3f; aRect: TRect);
+begin
+
+   pozicija[1] := pozicija[1] - smjer[1]*brzina;
+
+   if pozicija[1] < 0 then
+   begin
+     hp := 0;
+   end;
+
+end;
+
+end.

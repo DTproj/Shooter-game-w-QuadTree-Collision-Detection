@@ -1,0 +1,144 @@
+unit PlayerUnit;
+
+interface
+
+uses
+  MyTypes, BoidUnit, GunUnit, Winapi.Windows,  System.Classes, Vcl.Graphics, System.SysUtils;
+
+type
+
+TPlayer = class (TBoid)
+
+  gun, mina : TGun;
+  oruzje : TList;
+  gIx : integer;
+
+  constructor create;
+  destructor destroy; override;
+  procedure move(aVector: TVector3f; aRect : TRect);
+  procedure gunNxt;
+  procedure gunPrev;
+  procedure reload;
+  function getHP : String;
+  function getAmmo : String;
+
+
+end;
+
+implementation
+
+{ TPlayer }
+
+constructor TPlayer.create;
+var
+  gunDir : TVector3f;
+begin
+
+  inherited create;
+
+  hp := 100;
+  radijus := 20;
+  boja := clGreen;
+  gIx := 0;
+
+  pozicija[2] := 0;
+
+  smjer[0] := 20;
+  smjer[1] := 0;
+  smjer[2] := 0;
+
+  gunDir[0] := 0;
+  gunDir[1] := 1;
+  gunDir[2] := 0;
+
+  oruzje := TList.Create;
+
+  gun := TGun.create(pozicija, gunDir);
+  oruzje.Add(gun);
+
+  gun := TGun2.create(pozicija, gunDir);
+  oruzje.Add(gun);
+
+  gun := TGrenade.create(pozicija, gunDir);
+  oruzje.Add(gun);
+
+  gun := oruzje.Items[0];
+
+  mina := TMine.create(pozicija, gunDir);
+
+end;
+
+destructor TPlayer.destroy;
+var
+  i: integer;
+begin
+
+  for i := 0 to oruzje.Count do
+  begin
+    TGun (oruzje.Items[i]).Free;
+  end;
+
+  mina.Free;
+
+  inherited;
+
+end;
+
+function TPlayer.getAmmo: String;
+begin
+
+  result := intToStr(gun.ammo);
+
+end;
+
+function TPlayer.getHP: String;
+begin
+
+  result := intToStr(hp);
+
+end;
+
+procedure TPlayer.gunNxt;
+begin
+
+  if gIx < oruzje.Count-1 then
+  begin
+    inc(gIx);
+    gun := oruzje.Items[gIx];
+  end;
+
+end;
+
+procedure TPlayer.gunPrev;
+begin
+
+  if gIx >= 0 then
+  begin
+    dec(gIx);
+    gun := oruzje.Items[gIx];
+  end;
+
+end;
+
+procedure TPlayer.move(aVector: TVector3f; aRect: TRect);
+begin
+
+  pozicija := aVector;
+  gun.pozicija := aVector;
+
+end;
+
+
+procedure TPlayer.reload;
+begin
+
+  gun.ammo := gun.maxAmmo;
+
+  if mina.ammo <= 0 then
+  begin
+    mina.ammo := mina.maxAmmo;
+  end;
+
+end;
+
+end.
